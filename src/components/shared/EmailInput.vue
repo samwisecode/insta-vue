@@ -22,6 +22,7 @@ const validate = () => {
     @change="validate()"
     placeholder="email"
     class="input-text"
+    type="email"
   />
   <span v-if="error" style="color: red">
     {{ error }}

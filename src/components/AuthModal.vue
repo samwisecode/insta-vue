@@ -12,7 +12,7 @@ const { errorMessage, loading, user } = storeToRefs(userStore);
 const open = ref(false);
 const props = defineProps(["isLogin"]);
 
-const userCredentials = reactive({
+const userCredentials = ref({
   username: "",
   email: "",
   password: "",
