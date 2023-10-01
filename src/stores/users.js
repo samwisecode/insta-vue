@@ -110,7 +110,7 @@ export const useUsersStore = defineStore("users", () => {
 
     const { data: newUser } = await supabase
       .from("users")
-      .select("email")
+      .select()
       .eq("email", email)
       .single();
 
