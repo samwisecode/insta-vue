@@ -2,6 +2,8 @@
 import {ref} from 'vue';
 import {isEmailValid, getEmailErrors} from '../../validation/email'
 
+defineProps(['modelValue'])
+defineEmits(['update:modelValue'])
 const email = ref("");
 const isValid = ref(false);
 const error = ref("");
@@ -15,6 +17,8 @@ const validate = () => {
 <template>
   <a-input
     v-model:value="email"
+    :value="modelValue"
+    @input="$emit('update:modelValue', $event.target.value)"
     @change="validate()"
     placeholder="email"
     class="input-text"

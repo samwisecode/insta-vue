@@ -75,7 +75,7 @@ const title = props.isLogin ? "Login" : "Sign Up";
           placeholder="username"
           class="input-text"
         />
-        <EmailInput />
+        <EmailInput v-model="userCredentials.email"/>
         <a-input
           v-model:value="userCredentials.password"
           placeholder="password"
