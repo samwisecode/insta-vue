@@ -9,13 +9,24 @@ export const useUsersStore = defineStore("users", () => {
   const loading = ref(false);
   const loadingUser = ref(false);
 
-  const validateEmail = (email) => {
+  const validateEmail = email => {
     return String(email)
       .toLowerCase()
       .match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
   };
+
+  const slugifyUsername = username => {
+    return String(username)
+      .normalize('NFKD') // split accented characters into their base characters and diacritical marks
+      .replace(/[\u0300-\u036f]/g, '') // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+      .trim() // trim leading or trailing whitespace
+      .toLowerCase() // convert to lowercase
+      .replace(/[^a-z0-9 -]/g, '') // remove non-alphanumeric characters
+      .replace(/\s+/g, '-') // replace spaces with hyphens
+      .replace(/-+/g, '-'); // remove consecutive hyphens
+  }
 
   const handleLogin = async (credentials) => {
     const { email, password } = credentials;
@@ -72,6 +83,8 @@ export const useUsersStore = defineStore("users", () => {
       errorMessage.value = "Invalid email address";
       return;
     }
+
+    slugifyUsername(username)
 
     loading.value = true;
 
