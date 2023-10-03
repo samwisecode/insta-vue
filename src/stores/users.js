@@ -4,41 +4,21 @@ import { supabase } from "../supabase";
 import { fetchUserByEmail } from "../requests/users/fetchUserByEmail";
 
 export const useUsersStore = defineStore("users", () => {
-  const user = ref(null); // declare initial state
+  const user = ref(null);
   const errorMessage = ref("");
   const loading = ref(false);
   const loadingUser = ref(false);
 
-  const validateEmail = (email) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
-
   const handleLogin = async (credentials) => {
     const { email, password } = credentials;
-
-    loading.value = false;
-    errorMessage.value = "";
-
-    if (!validateEmail(email)) {
-      errorMessage.value = "Invalid email address";
-      return;
-    }
-
-    if (!password.length) {
-      errorMessage.value = "Password is required";
-      return;
-    }
-
     loading.value = true;
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    console.log(email, password)
 
     if (error) {
       loading.value = false;
