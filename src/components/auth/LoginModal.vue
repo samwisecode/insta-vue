@@ -5,15 +5,10 @@ import { storeToRefs } from "pinia";
 import EmailInput from "./shared/EmailInput.vue";
 
 const userStore = useUsersStore();
-
-// This is now a ref, which will cause it to rerender when it changes
-const { errorMessage, loading, user } = storeToRefs(userStore);
-
+const { errorMessage, loading } = storeToRefs(userStore);
 const open = ref(false);
-const props = defineProps(["isLogin"]);
 
 const userCredentials = reactive({
-  username: "",
   email: "",
   password: "",
 });
@@ -22,34 +17,22 @@ const showModal = () => {
   open.value = true;
 };
 
-const clearUserCredentialsInput = () => {
-  userCredentials.username = "";
-  userCredentials.email = "";
-  userCredentials.password = "";
-  userStore.clearErrorMessage();
-};
-
 const submitForm = async () => {
-  if (props.isLogin) {
-    await userStore.handleLogin({
-      password: userCredentials.password,
-      email: userCredentials.email,
-    });
-  } else {
-    await userStore.handleSignup({
-      username: userCredentials.username,
-      password: userCredentials.password,
-      email: userCredentials.email,
-    });
-  }
+  await userStore.handleLogin({
+    password: userCredentials.password,
+    email: userCredentials.email,
+  });
 };
 
-const handleCancel = () => {
-  clearUserCredentialsInput();
+const closeModal = () => {
+  clearUserCredentialsInputs();
   open.value = false;
 };
 
-const title = props.isLogin ? "Login" : "Sign Up";
+const clearUserCredentialsInputs = () => {
+  userCredentials.email = "";
+  userCredentials.password = "";
+};
 </script>
 
 <template>
@@ -59,12 +42,6 @@ const title = props.isLogin ? "Login" : "Sign Up";
     }}</a-button>
     <a-modal v-model:open="open" :title="title">
       <div :class="{ invisible: loading }">
-        <a-input
-          v-if="!isLogin"
-          v-model:value="userCredentials.username"
-          placeholder="username"
-          class="input-text"
-        />
         <EmailInput v-model="userCredentials.email" />
         <a-input
           v-model:value="userCredentials.password"
@@ -73,18 +50,18 @@ const title = props.isLogin ? "Login" : "Sign Up";
           class="input-text"
         />
       </div>
-      <a-typography-text type="danger" v-if="errorMessage">{{
-        errorMessage
-      }}</a-typography-text>
+      <a-typography-text v-if="errorMessage" type="danger">
+        {{ errorMessage }}
+      </a-typography-text>
       <template #footer>
-        <a-button key="back" @click="handleCancel">Cancel</a-button>
+        <a-button key="back" @click="closeModal">Cancel</a-button>
         <a-button
           key="submit"
           type="primary"
           :loading="loading"
           @click="submitForm"
         >
-          {{ title }}
+          Login
         </a-button>
       </template>
     </a-modal>
